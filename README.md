@@ -57,7 +57,7 @@
         ```    
           {
             "statusCodes": 404,
-            "statusDescription": "Theatre doesnot exist at all. :(",
+            "statusDescription": "Deleted Successfully",
             "movies": [],
             "theatres": []
             }
@@ -92,4 +92,100 @@
                 }
                 ]
          }
+    ```
+5) GET api/Movie
+    - Description
+         - Gets all the movie in the database.
+    - Request Body 
+        - None
+    - Response Body
+         ```    
+          {
+            "statusCodes": 200,
+            "statusDescription": "Successfully retrieve everything!!! :)",
+            "movies": [
+                {
+                    "movieId": 1,
+                    "name": "The NorthMan",
+                    "genre": "Action/Adventure",
+                    "director": "Robert Eggers",
+                    "theatreId": 8
+                },
+                {
+                    "movieId": 2,
+                    "name": "Father Stu",
+                    "genre": "Drama",
+                    "director": "Rosalind Ross",
+                    "theatreId": 9
+                },
+                {
+                    "movieId": 3,
+                    "name": "The Batman",
+                    "genre": "Action/Adventure",
+                    "director": "Matt Reeves",
+                    "theatreId": 8
+                }
+            ],
+            "theatres": []
+        }
+    ```
+            
+6) POST api/Movie
+    - Description
+         - Insert the new movie in the database.
+    - Request Body 
+        ```
+        {
+            "movieId": 5,
+            "name": "The Equalizer",
+            "genre": "Action/Thriler",
+            "director": "Antoine Fuqua",
+            "theatreId": 6
+        }
+        ```
+    - Response Body
+        ```    
+          {
+            "statusCodes": 200,
+            "statusDescription": "Added successfully :)",
+            "movies": [],
+            "theatres": []
+          }
+        ```
+7) DELETE api/Movie/{id}
+     - Description
+         - Delete the movie with matching ID in the database.
+    - Request Body 
+        - None
+    - Response Body
+        ```    
+          {
+            "statusCodes": 404,
+            "statusDescription": "Deleted Successfully. :)",
+            "movies": [],
+            "theatres": []
+            }
+        ```
+        
+8) GET api/Movie/{id}
+    - Description
+        - Get the movie with matching ID in the database.
+    - Request Body 
+        - None
+    - Response Body
+        ```    
+        {
+            "statusCodes": 200,
+            "statusDescription": "Successfully retrieve everything!!! :)",
+            "movies": [
+                {
+                    "movieId": 1,
+                    "name": "The NorthMan",
+                    "genre": "Action/Adventure",
+                    "director": "Robert Eggers",
+                    "theatreId": 8
+                }
+            ],
+            "theatres": []
+        }
     ```
