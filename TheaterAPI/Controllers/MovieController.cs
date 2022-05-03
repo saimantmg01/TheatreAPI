@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +25,29 @@ namespace TheaterAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            return await _context.Movies.ToListAsync();
+            //return await _context.Movies.ToListAsync();
+            var response = new Response();
+            var movie = await _context.Movies.ToListAsync();
+            response.StatusCodes = 404;
+            response.StatusDescription = "Unsuccessful";
+            if (movie.Count > 0 && movie != null)
+            {
+                response.StatusCodes = 200;
+                response.StatusDescription = "Successfully retrieve everything!!! :)";
+                for (int i = 0; i < movie.Count; ++i)
+                {
+                    response.Movies.Add(movie[i]);
+                }
+            }
+
+            return Ok(response);
         }
 
         // GET: api/Movie/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
+            /*
             var movie = await _context.Movies.FindAsync(id);
 
             if (movie == null)
@@ -40,6 +56,19 @@ namespace TheaterAPI.Controllers
             }
 
             return movie;
+            */
+            var response = new Response();
+            var movie = await _context.Movies.FindAsync(id);
+            response.StatusCodes = 404;
+            response.StatusDescription = "Cannot retrieve a theatre. Doesnot exist :(";
+            if (movie != null)
+            {
+                response.StatusCodes = 200;
+                response.StatusDescription = "Successfully retrieve everything!!! :)";
+                response.Movies.Add(movie);
+            }
+
+            return Ok(response);
         }
 
         // PUT: api/Movie/5

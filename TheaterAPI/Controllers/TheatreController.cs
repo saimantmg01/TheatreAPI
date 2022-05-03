@@ -26,13 +26,30 @@ namespace TheaterAPI.Controllers
         public async Task<ActionResult<IEnumerable<Theatre>>> GetTheatres()
         {
             //returns with children
-            return await _context.Theatres.Include(theater => theater.Movies).ToListAsync();
+            //return await _context.Theatres.Include(theater => theater.Movies).ToListAsync();
+            var response = new Response();
+            var theatre = await _context.Theatres.Include(theater => theater.Movies).ToListAsync();
+            response.StatusCodes = 404;
+            response.StatusDescription = "Unsuccessful";
+            if (theatre.Count > 0 && theatre != null)
+            {
+                response.StatusCodes = 200;
+                response.StatusDescription = "Successfully retrieve everything!!! :)";
+                for (int i = 0; i < theatre.Count; ++i)
+                {
+                    response.Theatres.Add(theatre[i]);
+                }
+            }
+
+            return Ok(response);
+
         }
 
         // GET: api/Theatre/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Theatre>> GetTheatre(int id)
         {
+            /*
             //returns also the  children
             var theatre = await _context.Theatres.Include(theatre => theatre.Movies).SingleOrDefaultAsync(theatre => theatre.TheatreId == id);
 
@@ -42,6 +59,20 @@ namespace TheaterAPI.Controllers
             }
 
             return theatre;
+            */
+            var response = new Response();
+            var theatre = await _context.Theatres.Include(theatre => theatre.Movies).SingleOrDefaultAsync(theatre => theatre.TheatreId == id);
+            response.StatusCodes = 404;
+            response.StatusDescription = "Cannot retrieve a theatre. Doesnot exist :(";
+            if (theatre != null)
+            {
+                response.StatusCodes = 200;
+                response.StatusDescription = "Successfully retrieve everything!!! :)";
+                response.Theatres.Add(theatre);
+            }
+
+            return Ok(response);
+
         }
 
         // PUT: api/Theatre/5
