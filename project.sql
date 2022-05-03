@@ -19,7 +19,7 @@ CREATE TABLE Movies (
 );
 
 /* Dummy values for 2 tables*/
-INSERT INTO theatre 
+INSERT INTO theatres 
 (TheatreId, Name, Address, Phone_no) 
 VALUES(1, 'REGAL E-WALK 4DX & RPX','247 W. 42nd St., New York, NY 10036','(844)462-7342'),
 (2, 'AMC EMPIRE 25','234 West 42nd St., New York, NY 10036', '(212) 398-2597'),
@@ -31,7 +31,7 @@ VALUES(1, 'REGAL E-WALK 4DX & RPX','247 W. 42nd St., New York, NY 10036','(844)4
 (8,'REGAL ATLAS PARK','80-28 Cooper Avenue, Glendale, NY 11385','(844) 462-7342'),
 (9,'REGAL UA MIDWAY','108-22 Queens Blvd., Forest Hills, NY 11375','(844) 462-7342');
 
-INSERT INTO Movie (MovieId,Name,Genre,Director,TheatreId) 
+INSERT INTO Movies (MovieId,Name,Genre,Director,TheatreId) 
 VALUES(1, 'The NorthMan','Action/Adventure','Robert Eggers',8),
 (2, 'Father Stu','Drama', 'Rosalind Ross',9),
 (3, 'The Batman','Action/Adventure','Matt Reeves',8);
@@ -44,9 +44,9 @@ select * from movies;
 SELECT 
     A.*, B.*
 FROM
-    Theatre AS A
+    Theatres AS A
         INNER JOIN
-    Movie AS B ON A.TheatreId = B.TheatreId
+    Movies AS B ON A.TheatreId = B.TheatreId
 WHERE A.TheatreId = 8;
 
 
