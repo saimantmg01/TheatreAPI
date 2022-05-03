@@ -92,7 +92,7 @@
                 }
                 ]
          }
-    ```
+     ```
 5) GET api/Movie
     - Description
          - Gets all the movie in the database.
@@ -128,7 +128,7 @@
             ],
             "theatres": []
         }
-    ```
+       ```
             
 6) POST api/Movie
     - Description
