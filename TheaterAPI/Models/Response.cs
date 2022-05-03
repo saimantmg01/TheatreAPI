@@ -1,6 +1,7 @@
 ﻿using System;
 namespace TheaterAPI.Models
 {
+	//Response Model Class
 	public class Response
 	{
 		public int StatusCodes { get; set; }

@@ -25,8 +25,6 @@ namespace TheaterAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Theatre>>> GetTheatres()
         {
-            //returns with children
-            //return await _context.Theatres.Include(theater => theater.Movies).ToListAsync();
             var response = new Response();
             var theatre = await _context.Theatres.Include(theater => theater.Movies).ToListAsync();
             response.StatusCodes = 404;
@@ -49,17 +47,6 @@ namespace TheaterAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Theatre>> GetTheatre(int id)
         {
-            /*
-            //returns also the  children
-            var theatre = await _context.Theatres.Include(theatre => theatre.Movies).SingleOrDefaultAsync(theatre => theatre.TheatreId == id);
-
-            if (theatre == null)
-            {
-                return NotFound();
-            }
-
-            return theatre;
-            */
             var response = new Response();
             var theatre = await _context.Theatres.Include(theatre => theatre.Movies).SingleOrDefaultAsync(theatre => theatre.TheatreId == id);
             response.StatusCodes = 404;
@@ -80,9 +67,14 @@ namespace TheaterAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTheatre(int id, Theatre theatre)
         {
+            var response = new Response();
+            response.StatusDescription = "Updated successfully. :)";
+            response.StatusCodes = 200;
             if (id != theatre.TheatreId)
             {
-                return BadRequest();
+                //return BadRequest();
+                response.StatusDescription = "Id passed and body id doesnot match. Its a bad request. :(";
+                response.StatusCodes = 404;
             }
 
             _context.Entry(theatre).State = EntityState.Modified;
@@ -95,7 +87,10 @@ namespace TheaterAPI.Controllers
             {
                 if (!TheatreExists(id))
                 {
-                    return NotFound();
+                    //return NotFound();
+                    response.StatusDescription = "Id passed doesnot exists at all. :(";
+                    response.StatusCodes = 404;
+                    return Ok(response);
                 }
                 else
                 {
@@ -103,7 +98,8 @@ namespace TheaterAPI.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
+            return Ok(response);
         }
 
         // POST: api/Theatre
@@ -111,10 +107,28 @@ namespace TheaterAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Theatre>> PostTheatre(Theatre theatre)
         {
+            var response = new Response();
+            response.StatusCodes = 200;
+            response.StatusDescription = "Added successfully :)";
             _context.Theatres.Add(theatre);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (TheatreExists(theatre.TheatreId))
+                {
+                    response.StatusCodes = 404;
+                    response.StatusDescription = "Cannot add. Already exists :(";
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-            return CreatedAtAction("GetTheatre", new { id = theatre.TheatreId }, theatre);
+            return Ok(response);
         }
 
         // DELETE: api/Theatre/5
@@ -122,15 +136,23 @@ namespace TheaterAPI.Controllers
         public async Task<IActionResult> DeleteTheatre(int id)
         {
             var theatre = await _context.Theatres.FindAsync(id);
-            if (theatre == null)
+            var response = new Response();
+
+            response.StatusCodes = 404;
+            response.StatusDescription = "Theatre doesnot exist at all. :(";
+
+          
+            if (theatre != null)
             {
-                return NotFound();
+                response.StatusDescription = "Deleted successfully :)";
+                response.StatusCodes = 200;
+                //return NotFound();
+                _context.Theatres.Remove(theatre);
+                await _context.SaveChangesAsync();
             }
 
-            _context.Theatres.Remove(theatre);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            //return NoContent();
+            return Ok(response);
         }
 
         private bool TheatreExists(int id)

@@ -25,7 +25,6 @@ namespace TheaterAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            //return await _context.Movies.ToListAsync();
             var response = new Response();
             var movie = await _context.Movies.ToListAsync();
             response.StatusCodes = 404;
@@ -47,16 +46,6 @@ namespace TheaterAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            /*
-            var movie = await _context.Movies.FindAsync(id);
-
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
-            return movie;
-            */
             var response = new Response();
             var movie = await _context.Movies.FindAsync(id);
             response.StatusCodes = 404;
@@ -76,9 +65,14 @@ namespace TheaterAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
+            var response = new Response();
+            response.StatusDescription = "Updated successfully. :)";
+            response.StatusCodes = 200;
             if (id != movie.MovieId)
             {
-                return BadRequest();
+                //return BadRequest();
+                response.StatusDescription = "Id passed and body id doesnot match. Its a bad request. :(";
+                response.StatusCodes = 404;
             }
 
             _context.Entry(movie).State = EntityState.Modified;
@@ -91,7 +85,10 @@ namespace TheaterAPI.Controllers
             {
                 if (!MovieExists(id))
                 {
-                    return NotFound();
+                    //return NotFound();
+                    response.StatusDescription = "Id passed doesnot exists at all. :(";
+                    response.StatusCodes = 404;
+                    return Ok(response);
                 }
                 else
                 {
@@ -99,7 +96,8 @@ namespace TheaterAPI.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
+            return Ok(response);
         }
 
         // POST: api/Movie
@@ -107,10 +105,28 @@ namespace TheaterAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
+            var response = new Response();
+            response.StatusCodes = 200;
+            response.StatusDescription = "Added successfully :)";
             _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (MovieExists(movie.MovieId))
+                {
+                    response.StatusCodes = 404;
+                    response.StatusDescription = "Cannot add. Already exists :(";
+                }
+                else
+                {
+                    throw;
+                }
+            }
+                
+            return Ok(response);
         }
 
         // DELETE: api/Movie/5
@@ -118,15 +134,21 @@ namespace TheaterAPI.Controllers
         public async Task<IActionResult> DeleteMovie(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
+            var response = new Response();
+            response.StatusCodes = 404;
+            response.StatusDescription = "Movie doesnot exist at all. :(";
+            
+            if (movie != null)
             {
-                return NotFound();
+                //return NotFound();
+                response.StatusCodes = 200;
+                response.StatusDescription = "Deleted successfully :)";
+                _context.Movies.Remove(movie);
+                await _context.SaveChangesAsync();
             }
 
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(response);
+            //return NoContent();
         }
 
         private bool MovieExists(int id)
